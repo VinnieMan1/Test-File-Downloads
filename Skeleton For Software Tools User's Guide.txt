@@ -1,0 +1,172 @@
+Skeleton For Software Tools--User's Guide
+*****************************************
+
+Programming
+===========
+
+Using SKELETON/BAS
+------------------
+LOAD "SKELETON/BAS". Edit Line 1 to reflect the name of your new "Software Tools" program
+(see COPY/BAS for an example). Now SAVE as your new program (ie, SAVE "COPY/BAS").
+At this point, you can begin writing your new program, starting at line 40000. (You may
+also want to optionally write an "opening comment" in line 39999, as in the COPY/BAS
+example below.)
+
+Line Numbering
+--------------
+Your "main()" program starts at line 40000.
+You can define subroutines for main() with line numbers 20000..39990.
+Example:
+	1 '	COPY/BAS -- APR 24, 2023
+
+	...
+
+	39999 '
+		COPY -- COPY STANDARD INPUT TO STANDARD OUTPUT
+
+	40000 GOSUB 2100: IF NOT VR%(0) THEN GOTO 59990
+	40100 VA$(0)= VR$(0): GOSUB 2300
+	40110 GOTO 40000
+
+	...
+
+
+Software Tools Procedures and Data
+----------------------------------
+
+getchar()		Read 1 char/byte from stdin
+---------
+Usage:		GOSUB 2100
+Result:		VR%(0)	succeed/fail (-1/0).	Fail on EOF
+Returns:	VR$(0)	one char/byte
+Typical usage:	200	GOSUB 2100
+			IF VR%(0) THEN
+				PRINT VR$(0);
+			ELSE
+				RETURN
+
+putchar( VA$(0))	Print string or char in VA$(0) to stdout
+----------------
+Usage:		GOSUB 2300
+Inputs:		VA$(0)	String or char to be output
+Typical Usage:	100	VA$(0)= "HELLO, WORLD"
+		200	GOSUB 2300
+
+putDec( Num!,		Print Num! in min Width% field on stdout
+	Width%)
+---------------
+Usage:		GOSUB 60350
+Inputs:		VA%(1)	Width%
+		VA!(0)	Num!
+Typical Usage:	100	VA%(1)= 10 ' Field width"
+			VA!(0)= 6.28
+		200	GOSUB 60350 ' PutDec()
+
+Defined Functions:
+..................
+
+FN MD!( S!, D!)		Modulo( S, divisor)
+---------------		Returns single-precision S mod D
+Defined in:	64011
+
+FN MN%( A%, B%)		Minimum( a, b)
+---------------		Returns the minimum of a, b
+Defined in:	64010
+
+FN MX%( A%, B%)		Maximum( a, b)
+---------------		Returns the maximum of a, b
+Defined in:	64010
+
+FN XR%( A%, B%)		XOR( a, b)
+---------------		Returns a XOR b
+Defined in:	64011
+
+
+Additonal Useful Procedures and Data
+------------------------------------
+getc()
+putNum()
+puts()
+fOpen()
+DN%()
+DX!()
+
+C1%()
+C2%()
+KY%()
+PR%()
+RS%()
+SC%()
+
+ScanArgv()
+AL$()
+AN$()
+LC$()
+NM$()
+UC$()
+WS$()
+
+WP!()
+
+Usage()
+ExitGracefully()
+PutErr()
+
+AC%()
+E4%()
+
+
+
+Using "SH/BAS"
+==============
+
+To use your "Software Tools" program, run "SH/BAS". 
+
+
+Cross-Reference to Ratfor Procedure Names in "Software Tools"
+=============================================================
+
+Ratfor Item	Skeleton Entry		Notes
+-----------	--------------		-----
+
+EOF		NOT VR%(0)		Ratfor (and C) return a symbolic constant when 
+		or			End-of-file is reached. SKELETON does not return
+		VR%(0) = 0		a "magic value", but instead reports a FAIL result
+					in VR%(0) for those procedures [like getc() and 
+					getchar()] that read a file.
+					(ST p9)		
+							
+getarg( n, array, maxsize)		
+		AV$(n)			The SKELETON version is an analog for C's "argv[n]".
+					{The total # of command-line arguments, known as
+					"argc" in C, can be read by FN AC%(0).}
+					(ST p38)	
+
+getc(c)		"getchar( VR$(0))":	If EOF, getchar() does not return a symbolic constant
+		GOSUB 2100		in VR$(0). Instead, VR%(0) will return FAIL (0) rather 
+					than the usual SUCCEED (-1).
+					(ST p7, 8, 31) 
+
+max( x, y)	FN MX%( X%, Y%)		DEF FN defined in line 64010. Returns the integer
+					maximum of integer arguments X% and Y%.
+					(ST p40)
+
+mod( x, y)	FN MD!( X!, Y!)		DEF FN defined in line 64011. Returns the single-
+					precision modulus (remainder) of X! / Y!.
+					(ST p21)
+
+NEWLINE					Suggested: create a string,
+					NL$= CHR$( 13)
+					at the beginning of your program.
+					(ST p12)
+						
+call putc( c)	"putchar( VA$(0))":	Store argument to putchar() in VA$(0).
+		GOSUB 2300		This may be a single character or a string.
+					(ST p7, 8, 32)
+
+call putdec( n, w)
+		"putDec( VA!(0),	The number to be printed, "n", is stored in VA!(0).
+			VA%(1))":	The field width in which it is right-justfied, "w",
+		GOSUB 60350		is an integer stored in VA%(1).
+					(ST p12)
+
